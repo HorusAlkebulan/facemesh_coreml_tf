@@ -1,0 +1,17 @@
+# environment.yml
+
+channels:
+  - defaults
+  - conda-forge
+
+name: facemesh_coreml_tf
+
+dependencies:
+  - matplotlib
+  - opencv
+  - tensorflow >= 2.2.0
+  - pillow # PIL
+  - pip
+  - python
+  - pip:
+      - coremltools
