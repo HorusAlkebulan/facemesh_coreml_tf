@@ -5,12 +5,23 @@ import platform
 from datetime import datetime
 import colorlog
 import numpy as np
-from constants import (APP_NAME, IMAGES_DIR, INPUT_DIR, MODEL_DIFF_ALLOWABLE_TOLERANCE_ATOL, MODEL_DIFF_ALLOWABLE_TOLERANCE_RTOL, MODELS_DIR, ONEDRIVE_ROOT, OUTPUT_DIR, OUTPUT_IMAGES_DIR,
+from constants import (APP_NAME, IMAGES_DIR, INPUT_DIR, MODEL_DIFF_ALLOWABLE_TOLERANCE_ATOL, MODEL_DIFF_ALLOWABLE_TOLERANCE_RTOL, MODELS_DIR, OUTPUT_DIR, OUTPUT_IMAGES_DIR,
                        OUTPUT_INTERMEDIATE, OUTPUT_LOGS_DIR,
                        OUTPUT_MODEL_SET_DIR, OUTPUT_MODELS_DIR,
                        OUTPUT_MOSAICS_DIR, OUTPUT_PROTOBUFS_DIR,
                        OUTPUT_TENSORS_DIR, TEST_IMAGE_RANDOM_PIXEL)
 
+def get_onedrive_root():
+
+    username = getpass.getuser()   
+    
+    if platform.system() == 'Darwin':
+        return f'/Users/{username}/git-projects/storage-root/facemesh'
+    elif platform.system() == 'Windows':
+        return f'C:\\Users\\{username}\\git-projects\\storage-root\\facemesh'
+    else:
+        logger.error(f'System OS could not be determined')
+        raise Exception('System OS could not be determined')
 
 def get_logger():
     logger = logging.getLogger(APP_NAME)
@@ -20,10 +31,12 @@ def get_logger():
         console.setFormatter(colorlog.ColoredFormatter('%(log_color)s%(levelname)s:%(name)s:%(message)s'))
         logger.addHandler(console)
 
-        make_output_dirs(ONEDRIVE_ROOT)
+        storage_root = get_onedrive_root()
+
+        make_output_dirs(storage_root)
         
         filename = f"{APP_NAME}_{datetime.today().strftime('%Y-%m-%d')}.log"
-        file_path = os.path.join(ONEDRIVE_ROOT, OUTPUT_MODEL_SET_DIR, OUTPUT_LOGS_DIR, filename)
+        file_path = os.path.join(storage_root, OUTPUT_MODEL_SET_DIR, OUTPUT_LOGS_DIR, filename)
         logfile = logging.FileHandler(file_path)
         logfile.setFormatter(logging.Formatter('%(levelname)s:%(name)s:%(message)s'))
         logger.addHandler(logfile)
@@ -49,17 +62,7 @@ def make_output_dirs(root_dir):
 logger = get_logger()
 
 
-def get_onedrive_root():
 
-    username = getpass.getuser()   
-    
-    if platform.system() == 'Darwin':
-        return f'/Users/{username}/git-projects/storage-root/facemesh'
-    elif platform.system() == 'Windows':
-        return f'C:\\Users\\{username}\\git-projects\\storage-root\\facemesh'
-    else:
-        logger.error(f'System OS could not be determined')
-        raise Exception('System OS could not be determined')
 
 def get_model_export_name(model_basename, framework_version, precision, output_platform, primary_input_h=None, primary_input_w=None):
     inference_size_tag = f'{primary_input_h}h{primary_input_w}w'
