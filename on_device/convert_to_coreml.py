@@ -23,7 +23,8 @@ def convert_to_coreml32():
     input_image = "sample.jpg"
     input_names = ['input_image']
     output_names = ['Identity']
-    output_image_path = "facemesh_out_coreml.jpg"
+    coreml32_output_image_path = f'{model_name}_out_coreml.jpg'
+    tf_output_image_path = f'{model_name}_out_tf.jpg'
 
     logger.info(f'Converting model to CoreML as {coreml32_path}')
 
@@ -71,14 +72,19 @@ def convert_to_coreml32():
 
     logger.info("Tensorflow output mean: {}, {}".format(
         tf_output[:, :-1].mean(), tf_output[:, -1]))
+
     logger.info("CoreMl output mean: {}, {}".format(
         coreml_output[:, :-1].mean(), coreml_output[:, -1]))
 
-    detections = coreml_output[:, :-1].reshape(468, 3)[:, :2]
+    tf_detections = tf_output[:, :-1].reshape(468, 3)[:, :2]
+    coreml32_detections = coreml_output[:, :-1].reshape(468, 3)[:, :2]
     plt.imshow(inp_image)
-    plt.scatter(detections[:, 0], detections[:, 1], s=1.0, marker="+")
-    plt.savefig(output_image_path)
-    plt.show()
+    plt.scatter(coreml32_detections[:, 0], coreml32_detections[:, 1], s=1.0, marker="+")
+    plt.scatter(tf_detections[:, 0], tf_detections[:, 1], s=1.0, marker="*")
+    plt.savefig(coreml32_output_image_path)
+
+
+    # plt.show()
 
 if __name__ == '__main__':
     convert_to_coreml32()
