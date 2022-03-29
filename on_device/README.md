@@ -5,16 +5,14 @@
 ### Create Environment
 
 ```bash
-cd on_device
-conda env create --file environment.yml
+conda env create --file on_device/environment.yml
 conda activate mediapipe-sensei-ondevice
 ```
 
 ### Update Environment
 
 ```bash
-cd on_device
-conda env update --file environment.yml --prune
+conda env update --file on_device/environment.yml --prune
 ```
 
 ### Remove Environment
@@ -29,6 +27,11 @@ conda env remove -n mediapipe-sensei-ondevice
 ### From TFLite to TensorFlow h5 Saved Model
 
 ```bash
-cd on_device
-python convert_to_tensorflow.py
+PYTHONPATH=%PYTHONPATH%:. python on_device/convert_to_tensorflow.py
+```
+
+### From TensorFlow h5 Saved Model to CoreML
+
+```bash
+PYTHONPATH=%PYTHONPATH%:. python on_device/convert_to_coreml.py
 ```
